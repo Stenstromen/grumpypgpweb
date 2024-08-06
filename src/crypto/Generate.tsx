@@ -1,20 +1,12 @@
 import * as openpgp from "openpgp";
+import { Curves } from "../Types";
 
 export const GenerateECCKeypair = async (
-  curve:
-    | "curve25519"
-    | "ed25519"
-    | "p256"
-    | "p384"
-    | "p521"
-    | "brainpoolP256r1"
-    | "brainpoolP384r1"
-    | "brainpoolP512r1"
-    | "secp256k1",
-    name: string,
-    email: string,
-    comment: string,
-    passphrase: string
+  curve: Curves,
+  name: string,
+  email: string,
+  comment: string,
+  passphrase: string
 ) => {
   const { privateKey, publicKey }: openpgp.SerializedKeyPair<string> =
     await openpgp.generateKey({
