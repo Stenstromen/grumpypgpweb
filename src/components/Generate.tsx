@@ -78,34 +78,33 @@ function Generate() {
 
   return (
     <div>
-      <Grid>
-        <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
-          <Tabs variant="outline" defaultValue="ecc">
-            <Tabs.List>
-              <Tabs.Tab value="ecc">ECC</Tabs.Tab>
-              <Tabs.Tab value="rsa">RSA</Tabs.Tab>
-            </Tabs.List>
-            <Tabs.Panel value="rsa">
-              <Group grow>
-                <Input.Wrapper
-                  label="RSA Bits"
-                  description="RSA key size, defaults to 4096"
+      <Tabs variant="outline" defaultValue="ecc">
+        <Tabs.List>
+          <Tabs.Tab value="ecc">ECC</Tabs.Tab>
+          <Tabs.Tab value="rsa">RSA</Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="rsa">
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Input.Wrapper
+                label="RSA Bits"
+                description="RSA key size, defaults to 4096"
+              >
+                <Input
+                  component="select"
+                  rightSection={<IconChevronDown size={14} stroke={1.5} />}
+                  pointer
+                  mt="md"
+                  value={bits}
+                  onChange={(e) =>
+                    setBits(parseInt(e.currentTarget.value) as 2048 | 4096)
+                  }
                 >
-                  <Input
-                    component="select"
-                    rightSection={<IconChevronDown size={14} stroke={1.5} />}
-                    pointer
-                    mt="md"
-                    value={bits}
-                    onChange={(e) =>
-                      setBits(parseInt(e.currentTarget.value) as 2048 | 4096)
-                    }
-                  >
-                    <option value="2048">2048</option>
-                    <option value="4096">4096</option>
-                  </Input>
-                </Input.Wrapper>
-              </Group>
+                  <option value="2048">2048</option>
+                  <option value="4096">4096</option>
+                </Input>
+              </Input.Wrapper>
               <Group grow>
                 <NameInput name={name} setName={setName} />
               </Group>
@@ -134,8 +133,15 @@ function Generate() {
               <Group grow>
                 <Button onClick={genKey.bind(null, "rsa")}>Generate</Button>
               </Group>
-            </Tabs.Panel>
-            <Tabs.Panel value="ecc">
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
+            </Grid.Col>
+          </Grid>
+        </Tabs.Panel>
+        <Tabs.Panel value="ecc">
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <Group grow>
                 <Input.Wrapper
                   label="ECC Curve"
@@ -183,22 +189,13 @@ function Generate() {
               <Group grow>
                 <Button onClick={genKey.bind(null, "ecc")}>Generate</Button>
               </Group>
-            </Tabs.Panel>
-          </Tabs>
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
-          <Stack
-            h={"auto"}
-            bg="var(--mantine-color-body)"
-            align="stretch"
-            justify="center"
-            gap="xl"
-            style={{ overflowY: "auto" }}
-          >
-            <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
-          </Stack>
-        </Grid.Col>
-      </Grid>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
+            </Grid.Col>
+          </Grid>
+        </Tabs.Panel>
+      </Tabs>
     </div>
   );
 }

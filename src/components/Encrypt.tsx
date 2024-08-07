@@ -71,15 +71,8 @@ function Encrypt() {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <Textarea
-                label="Public Key"
-                placeholder="Fetch public key from keys.openpgp.org"
-                rows={10}
-                value={publicKey}
-                readOnly
-              />{" "}
-              <Textarea
                 leftSection={
-                  <CopyButton value={publicKey} timeout={2000}>
+                  <CopyButton value={encryptedMessage} timeout={2000}>
                     {({ copied, copy }) => (
                       <Tooltip
                         label={copied ? "Copied" : "Copy"}
@@ -109,12 +102,76 @@ function Encrypt() {
                 readOnly
                 style={{ display: encryptedMessage ? undefined : "none" }}
               />
+              <Textarea
+                label="Public Key"
+                placeholder="Fetch public key from keys.openpgp.org"
+                rows={10}
+                value={publicKey}
+                readOnly
+              />
             </Grid.Col>
           </Grid>
         </Tabs.Panel>
 
-        <Tabs.Panel value="publicKey">
-          <h1>Public Key</h1>
+        <Tabs.Panel value="publickey">
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Textarea
+                label="Message"
+                placeholder="Enter Message"
+                rows={10}
+                value={message}
+                onChange={(e) => setMessage(e.currentTarget.value)}
+              />
+              <Divider my="xs" size="sm" labelPosition="center" />
+              <Group grow>
+                <Button onClick={() => EncryptMessageFromPublicKey()}>
+                  Encrypt
+                </Button>
+              </Group>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Textarea
+                leftSection={
+                  <CopyButton value={encryptedMessage} timeout={2000}>
+                    {({ copied, copy }) => (
+                      <Tooltip
+                        label={copied ? "Copied" : "Copy"}
+                        withArrow
+                        position="right"
+                      >
+                        <ActionIcon
+                          color={copied ? "teal" : "gray"}
+                          variant="subtle"
+                          onClick={copy}
+                          size={"100%"}
+                        >
+                          {copied ? (
+                            <IconCheck style={{ width: rem(16) }} />
+                          ) : (
+                            <IconCopy style={{ width: rem(16) }} />
+                          )}
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
+                  </CopyButton>
+                }
+                label="Encrypted Message"
+                placeholder="Encrypted message will appear here"
+                rows={10}
+                value={encryptedMessage}
+                readOnly
+                style={{ display: encryptedMessage ? undefined : "none" }}
+              />
+              <Textarea
+                label="Public Key"
+                placeholder="Please Enter Public Key"
+                rows={10}
+                value={publicKey}
+                onChange={(e) => setPublicKey(e.currentTarget.value)}
+              />
+            </Grid.Col>
+          </Grid>
         </Tabs.Panel>
 
         <Tabs.Panel value="decrypt">Settings tab content</Tabs.Panel>

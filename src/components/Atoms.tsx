@@ -2,6 +2,7 @@ import {
   ActionIcon,
   CloseButton,
   CopyButton,
+  FocusTrap,
   Input,
   PasswordInput,
   rem,
@@ -95,22 +96,24 @@ export const NameInput: React.FC<{
 }> = ({ name, setName }) => {
   return (
     <>
-      <Input.Wrapper label="Name" description="Name of the key owner">
-        <Input
-          placeholder="Anonymous"
-          leftSection={<IconTextColor size={16} />}
-          value={name}
-          onChange={(e) => setName(e.currentTarget.value)}
-          rightSectionPointerEvents="all"
-          rightSection={
-            <CloseButton
-              aria-label="Clear input"
-              onClick={() => setName("")}
-              style={{ display: name ? undefined : "none" }}
-            />
-          }
-        />
-      </Input.Wrapper>
+      <FocusTrap active>
+        <Input.Wrapper label="Name" description="Name of the key owner">
+          <Input
+            placeholder="Anonymous"
+            leftSection={<IconTextColor size={16} />}
+            value={name}
+            onChange={(e) => setName(e.currentTarget.value)}
+            rightSectionPointerEvents="all"
+            rightSection={
+              <CloseButton
+                aria-label="Clear input"
+                onClick={() => setName("")}
+                style={{ display: name ? undefined : "none" }}
+              />
+            }
+          />
+        </Input.Wrapper>
+      </FocusTrap>
     </>
   );
 };
