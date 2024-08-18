@@ -6,7 +6,9 @@ import {
   Divider,
   Grid,
   Group,
+  Input,
   rem,
+  Select,
   Tabs,
   Textarea,
   Tooltip,
@@ -16,10 +18,44 @@ import { EncryptMessagePublicKey, FetchPublicKey } from "../crypto/Encrypt";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
 
 function Encrypt() {
+  type Key = {
+    id: string;
+    creationTime: Date;
+    primaryUser: string;
+    publicKey: string;
+    privateKey: string;
+  };
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [publicKey, setPublicKey] = useState<string>("");
   const [encryptedMessage, setEncryptedMessage] = useState<string>("");
+  const [keysArray, setKeysArray] = useState<Key[]>([]);
+
+  const LoadAllKeys = () => {
+    const keysArray: Key[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        const item = localStorage.getItem(key);
+        if (item) {
+          try {
+            const parsedItem = JSON.parse(item);
+            if (parsedItem.publicKey && parsedItem.privateKey) {
+              keysArray.push(parsedItem);
+            }
+          } catch (e) {
+            console.error("Error parsing item from localStorage", e);
+          }
+        }
+      }
+    }
+    return keysArray;
+  };
+
+  useEffect(() => {
+    const keys = LoadAllKeys();
+    setKeysArray(keys);
+  }, [keysArray]);
 
   const EncryptMessageFromPublicKey = async () => {
     const encrypted = await EncryptMessagePublicKey(message, publicKey);
@@ -116,6 +152,24 @@ function Encrypt() {
         <Tabs.Panel value="publickey">
           <Grid>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Input.Wrapper label="PublicKey" description="Public GPG Key">
+                <Select
+                  placeholder="BrowserStore"
+                  data={keysArray.map((key) => ({
+                    value: key.id,
+                    label: `${key.primaryUser} // ${key.id.slice(-8)}`,
+                  }))}
+                  onChange={(e) => {
+                    const selectedKey = keysArray.find((key) => key.id === e);
+                    if (selectedKey) {
+                      setPublicKey(selectedKey.publicKey);
+                    }
+                  }}
+                  onClear={() => setPublicKey("")}
+                  clearable
+                />
+              </Input.Wrapper>
+
               <Textarea
                 label="Message"
                 placeholder="Enter Message"

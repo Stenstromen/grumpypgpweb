@@ -3,6 +3,7 @@ import { Container, MantineProvider, Space, Stack, Tabs } from "@mantine/core";
 import Generate from "./components/Generate";
 import Encrypt from "./components/Encrypt";
 import {
+  IconBrowserCheck,
   IconLock,
   IconLockOpen,
   IconShieldLock,
@@ -13,6 +14,7 @@ import Decrypt from "./components/Decrypt";
 import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import Sign from "./components/Sign";
+import BrowserStore from "./components/BrowserStore";
 
 const MainComponent = () => {
   const navigate = useNavigate();
@@ -44,6 +46,10 @@ const MainComponent = () => {
             <Tabs.Tab value="decrypt" leftSection={<IconLockOpen />}>
               Decrypt
             </Tabs.Tab>
+
+            <Tabs.Tab value="browserstore" leftSection={<IconBrowserCheck />}>
+              BrowserStore&#8482;
+            </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="generate">
@@ -60,6 +66,9 @@ const MainComponent = () => {
 
           <Tabs.Panel value="decrypt">
             <Decrypt />
+          </Tabs.Panel>
+          <Tabs.Panel value="browserstore">
+            <BrowserStore />
           </Tabs.Panel>
         </Stack>
       </Tabs>
