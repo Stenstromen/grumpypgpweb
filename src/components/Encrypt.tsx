@@ -152,7 +152,7 @@ function Encrypt() {
         <Tabs.Panel value="publickey">
           <Grid>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
-              <Input.Wrapper label="PublicKey" description="Public GPG Key">
+              <Input.Wrapper label="PublicKey" description="Public PGP Key">
                 <Select
                   placeholder="BrowserStore"
                   data={keysArray.map((key) => ({
