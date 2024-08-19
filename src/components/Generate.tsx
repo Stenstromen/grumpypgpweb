@@ -9,7 +9,6 @@ import {
   Tabs,
   Grid,
   Divider,
-  //Select,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
@@ -21,18 +20,10 @@ import {
   PasswordInputs,
 } from "./Atoms";
 import { Curves } from "../Types";
-import { SaveToBrowserStore } from "../crypto/Store";
+import { SaveKeys } from "../crypto/Store";
 function Generate() {
-  /*   type Key = {
-    id: string;
-    creationTime: Date;
-    primaryUser: string;
-    publicKey: string;
-    privateKey: string;
-  }; */
   const [publicKey, setPublicKey] = useState<string>("");
   const [privateKey, setPrivateKey] = useState<string>("");
-  //const [keysArray, setKeysArray] = useState<Key[]>([]);
   const [curve, setCurve] = useState<Curves>("curve25519");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -86,57 +77,6 @@ function Generate() {
     setPrivateKey(privateKey);
   };
 
-  const SaveKeys = async () => {
-    let publicKeyID: string;
-    let creationTime: Date;
-    let primaryUser: string | undefined;
-
-    try {
-      const keypair = await openpgp.readKey({ armoredKey: publicKey });
-      publicKeyID = keypair.getKeyIDs()[0].toHex();
-      creationTime = keypair.getCreationTime();
-      primaryUser = (await keypair.getPrimaryUser()).user.userID?.name;
-    } catch (e) {
-      console.error("Error reading public key", e);
-      return;
-    }
-
-    const keys = {
-      id: publicKeyID,
-      creationTime: creationTime,
-      primaryUser: primaryUser,
-      publicKey: publicKey,
-      privateKey: privateKey,
-    };
-    const keysString = JSON.stringify(keys);
-    SaveToBrowserStore(publicKeyID, keysString);
-  };
-
-  /*   const LoadAllKeys = () => {
-    const keysArray: Key[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key) {
-        const item = localStorage.getItem(key);
-        if (item) {
-          try {
-            const parsedItem = JSON.parse(item);
-            if (parsedItem.publicKey && parsedItem.privateKey) {
-              keysArray.push(parsedItem);
-            }
-          } catch (e) {
-            console.error("Error parsing item from localStorage", e);
-          }
-        }
-      }
-    }
-    return keysArray;
-  }; */
-
-  /*   useEffect(() => {
-    const keys = LoadAllKeys();
-    setKeysArray(keys);
-  }, []); */
   return (
     <div>
       <Tabs variant="outline" defaultValue="ecc">
@@ -146,22 +86,6 @@ function Generate() {
         </Tabs.List>
 
         <Tabs.Panel value="rsa">
-          {/*           <Select
-            label="Select a key"
-            placeholder="Pick one"
-            data={keysArray.map((key) => ({
-              value: key.id,
-              label: key.id,
-            }))}
-            onChange={(e) => {
-              const selectedKey = keysArray.find((key) => key.id === e);
-              if (selectedKey) {
-                setPublicKey(selectedKey.publicKey);
-                setPrivateKey(selectedKey.privateKey);
-              }
-            }}
-            clearable
-          /> */}
           <Grid>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <Input.Wrapper
@@ -214,7 +138,7 @@ function Generate() {
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
               <Divider my="xs" size="sm" labelPosition="center" />
-              <Button fullWidth onClick={SaveKeys}>
+              <Button fullWidth onClick={() => SaveKeys(publicKey, privateKey)}>
                 Save to BrowserStore
               </Button>
             </Grid.Col>
@@ -274,7 +198,7 @@ function Generate() {
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
               <Divider my="xs" size="sm" labelPosition="center" />
-              <Button fullWidth onClick={SaveKeys}>
+              <Button fullWidth onClick={() => SaveKeys(publicKey, privateKey)}>
                 Save to BrowserStore
               </Button>
             </Grid.Col>

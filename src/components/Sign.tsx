@@ -22,7 +22,7 @@ import {
   IconPasswordUser,
   IconX,
 } from "@tabler/icons-react";
-import { /* useEffect, */ useState } from "react";
+import { useState } from "react";
 import { SignMessagePrivateKey, VerifyMessagePublicKey } from "../crypto/Sign";
 
 function Sign() {

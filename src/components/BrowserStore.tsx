@@ -2,39 +2,13 @@ import { ActionIcon, Button, Grid, Group, Stack, Tabs } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { KeyPairOutput } from "./Atoms";
 import { IconTrash } from "@tabler/icons-react";
+import { Key } from "../Types";
+import { LoadAllKeys } from "../crypto/Store";
 
 function BrowserStore() {
-  type Key = {
-    id: string;
-    creationTime: Date;
-    primaryUser: string;
-    publicKey: string;
-    privateKey: string;
-  };
   const [publicKey, setPublicKey] = useState<string>("");
   const [privateKey, setPrivateKey] = useState<string>("");
   const [keysArray, setKeysArray] = useState<Key[]>([]);
-
-  const LoadAllKeys = () => {
-    const keysArray: Key[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key) {
-        const item = localStorage.getItem(key);
-        if (item) {
-          try {
-            const parsedItem = JSON.parse(item);
-            if (parsedItem.publicKey && parsedItem.privateKey) {
-              keysArray.push(parsedItem);
-            }
-          } catch (e) {
-            console.error("Error parsing item from localStorage", e);
-          }
-        }
-      }
-    }
-    return keysArray;
-  };
 
   useEffect(() => {
     const keys = LoadAllKeys();

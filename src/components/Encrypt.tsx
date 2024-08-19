@@ -16,41 +16,15 @@ import {
 import { EmailInput } from "./Atoms";
 import { EncryptMessagePublicKey, FetchPublicKey } from "../crypto/Encrypt";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
+import { Key } from "../Types";
+import { LoadAllKeys } from "../crypto/Store";
 
 function Encrypt() {
-  type Key = {
-    id: string;
-    creationTime: Date;
-    primaryUser: string;
-    publicKey: string;
-    privateKey: string;
-  };
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [publicKey, setPublicKey] = useState<string>("");
   const [encryptedMessage, setEncryptedMessage] = useState<string>("");
   const [keysArray, setKeysArray] = useState<Key[]>([]);
-
-  const LoadAllKeys = () => {
-    const keysArray: Key[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key) {
-        const item = localStorage.getItem(key);
-        if (item) {
-          try {
-            const parsedItem = JSON.parse(item);
-            if (parsedItem.publicKey && parsedItem.privateKey) {
-              keysArray.push(parsedItem);
-            }
-          } catch (e) {
-            console.error("Error parsing item from localStorage", e);
-          }
-        }
-      }
-    }
-    return keysArray;
-  };
 
   useEffect(() => {
     const keys = LoadAllKeys();

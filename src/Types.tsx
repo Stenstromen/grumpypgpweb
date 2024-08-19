@@ -8,3 +8,11 @@ export type Curves =
   | "brainpoolP384r1"
   | "brainpoolP512r1"
   | "secp256k1";
+
+export type Key = {
+  id: string;
+  creationTime: Date;
+  primaryUser: string;
+  publicKey: string;
+  privateKey: string;
+};
