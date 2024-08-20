@@ -1,7 +1,13 @@
 import "@mantine/core/styles.css";
-import { Container, MantineProvider, Space, Stack, Tabs } from "@mantine/core";
-import Generate from "./components/Generate";
-import Encrypt from "./components/Encrypt";
+import { lazy, Suspense } from "react";
+import {
+  Container,
+  MantineProvider,
+  Skeleton,
+  Space,
+  Stack,
+  Tabs,
+} from "@mantine/core";
 import {
   IconBrowserCheck,
   IconLock,
@@ -10,13 +16,19 @@ import {
   IconSignature,
   IconSquareRoundedPlus,
 } from "@tabler/icons-react";
-import Decrypt from "./components/Decrypt";
 import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import Sign from "./components/Sign";
 import BrowserStore from "./components/BrowserStore";
 
+const Sus = () => {
+  return <Skeleton height="100%" mt={6} width="100%" radius="xl" />;
+};
+
 const MainComponent = () => {
+  const Generate = lazy(() => import("./components/Generate"));
+  const Encrypt = lazy(() => import("./components/Encrypt"));
+  const Sign = lazy(() => import("./components/Sign"));
+  const Decrypt = lazy(() => import("./components/Decrypt"));
   const navigate = useNavigate();
   const { tabValue } = useParams();
   return (
@@ -53,22 +65,33 @@ const MainComponent = () => {
           </Tabs.List>
 
           <Tabs.Panel value="generate">
-            <Generate />
+            <Suspense fallback={<Sus />}>
+              <Generate />
+            </Suspense>
           </Tabs.Panel>
 
           <Tabs.Panel value="encrypt">
-            <Encrypt />
+            <Suspense fallback={<Sus />}>
+              <Encrypt />
+            </Suspense>
           </Tabs.Panel>
 
           <Tabs.Panel value="sign">
-            <Sign />
+            <Suspense fallback={<Sus />}>
+              <Sign />
+            </Suspense>
           </Tabs.Panel>
 
           <Tabs.Panel value="decrypt">
-            <Decrypt />
+            <Suspense fallback={<Sus />}>
+              <Decrypt />
+            </Suspense>
           </Tabs.Panel>
+
           <Tabs.Panel value="browserstore">
-            <BrowserStore />
+            <Suspense fallback={<Sus />}>
+              <BrowserStore />
+            </Suspense>
           </Tabs.Panel>
         </Stack>
       </Tabs>

@@ -5,15 +5,22 @@ import { IconTrash } from "@tabler/icons-react";
 import { Key } from "../Types";
 import { LoadAllKeys } from "../crypto/Store";
 
-function BrowserStore() {
-  const [publicKey, setPublicKey] = useState<string>("");
-  const [privateKey, setPrivateKey] = useState<string>("");
+const useLoadKeys = () => {
   const [keysArray, setKeysArray] = useState<Key[]>([]);
 
   useEffect(() => {
     const keys = LoadAllKeys();
     setKeysArray(keys);
-  }, [keysArray]);
+  }, []);
+
+  return [keysArray, setKeysArray] as const;
+};
+
+function BrowserStore() {
+  const [publicKey, setPublicKey] = useState<string>("");
+  const [privateKey, setPrivateKey] = useState<string>("");
+  const [keysArray, setKeysArray] = useLoadKeys();
+
   return (
     <div>
       <Tabs variant="outline" defaultValue="store">
