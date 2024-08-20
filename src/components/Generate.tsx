@@ -21,6 +21,7 @@ import {
 } from "./Atoms";
 import { Curves } from "../Types";
 import { SaveKeys } from "../crypto/Store";
+
 function Generate() {
   const [publicKey, setPublicKey] = useState<string>("");
   const [privateKey, setPrivateKey] = useState<string>("");
@@ -31,6 +32,7 @@ function Generate() {
   const [passphrase, setPassphrase] = useState<string>("");
   const [confirmPassphrase, setConfirmPassphrase] = useState<string>("");
   const [bits, setBits] = useState<2048 | 4096>(4096);
+  const [loading, setLoading] = useState<boolean>(false);
   const [visible, { toggle }] = useDisclosure(false);
   const eccCurves: string[] = [
     "Curve25519",
@@ -75,6 +77,22 @@ function Generate() {
 
     setPublicKey(publicKey);
     setPrivateKey(privateKey);
+  };
+
+  const SaveKeysButton = () => {
+    return (
+      <Button fullWidth loading={loading} onClick={handleSaveKeys}>
+        Save to BrowserStore
+      </Button>
+    );
+  };
+
+  const handleSaveKeys = () => {
+    setLoading(true);
+    setTimeout(() => {
+      SaveKeys(publicKey, privateKey);
+      setLoading(false);
+    }, 1000);
   };
 
   return (
@@ -138,9 +156,7 @@ function Generate() {
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
               <Divider my="xs" size="sm" labelPosition="center" />
-              <Button fullWidth onClick={() => SaveKeys(publicKey, privateKey)}>
-                Save to BrowserStore
-              </Button>
+              <SaveKeysButton />
             </Grid.Col>
           </Grid>
         </Tabs.Panel>
@@ -198,9 +214,7 @@ function Generate() {
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
               <Divider my="xs" size="sm" labelPosition="center" />
-              <Button fullWidth onClick={() => SaveKeys(publicKey, privateKey)}>
-                Save to BrowserStore
-              </Button>
+              <SaveKeysButton />
             </Grid.Col>
           </Grid>
         </Tabs.Panel>

@@ -1,9 +1,18 @@
-import { ActionIcon, Button, Grid, Group, Stack, Tabs } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  Grid,
+  Group,
+  Stack,
+  Tabs,
+  Textarea,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { KeyPairOutput } from "./Atoms";
 import { IconTrash } from "@tabler/icons-react";
 import { Key } from "../Types";
-import { LoadAllKeys } from "../crypto/Store";
+import { LoadAllKeys, SaveKeys } from "../crypto/Store";
 
 const useLoadKeys = () => {
   const [keysArray, setKeysArray] = useState<Key[]>([]);
@@ -19,13 +28,33 @@ const useLoadKeys = () => {
 function BrowserStore() {
   const [publicKey, setPublicKey] = useState<string>("");
   const [privateKey, setPrivateKey] = useState<string>("");
+  const [publicKeyImport, setPublicKeyImport] = useState<string>("");
+  const [privateKeyImport, setPrivateKeyImport] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [keysArray, setKeysArray] = useLoadKeys();
+
+  const SaveKeysButton = () => {
+    return (
+      <Button fullWidth loading={loading} onClick={handleSaveKeys}>
+        Save to BrowserStore
+      </Button>
+    );
+  };
+
+  const handleSaveKeys = () => {
+    setLoading(true);
+    setTimeout(() => {
+      SaveKeys(publicKeyImport, privateKeyImport);
+      setLoading(false);
+    }, 1000);
+  };
 
   return (
     <div>
       <Tabs variant="outline" defaultValue="store">
         <Tabs.List>
           <Tabs.Tab value="store">BrowserStore</Tabs.Tab>
+          <Tabs.Tab value="import">Import</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="store">
           <Grid>
@@ -62,6 +91,35 @@ function BrowserStore() {
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <KeyPairOutput publicKey={publicKey} privateKey={privateKey} />
+            </Grid.Col>
+          </Grid>
+        </Tabs.Panel>
+        <Tabs.Panel value="import">
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Stack>
+                <p>Import a key by pasting it here</p>
+              </Stack>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Textarea
+                label="Public Key"
+                value={publicKeyImport}
+                rows={10}
+                onChange={(event) =>
+                  setPublicKeyImport(event.currentTarget.value)
+                }
+              />
+              <Textarea
+                label="Private Key"
+                value={privateKeyImport}
+                rows={10}
+                onChange={(event) =>
+                  setPrivateKeyImport(event.currentTarget.value)
+                }
+              />
+              <Divider my="xs" size="sm" labelPosition="center" />
+              <SaveKeysButton />
             </Grid.Col>
           </Grid>
         </Tabs.Panel>
