@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as openpgp from "openpgp";
 import { GenerateECCKeypair, GenerateRSAKeypair } from "../crypto/Generate";
 import {
@@ -20,7 +20,8 @@ import {
   PasswordInputs,
 } from "./Atoms";
 import { Curves } from "../Types";
-import { SaveKeys } from "../crypto/Store";
+import { LoadAllKeys, SaveKeys } from "../crypto/Store";
+import { useDefaultProvider } from "../contexts/Default";
 
 function Generate() {
   const [publicKey, setPublicKey] = useState<string>("");
@@ -45,6 +46,13 @@ function Generate() {
     "BrainpoolP512r1",
     "Secp256k1",
   ];
+  const { setKeysArray } = useDefaultProvider();
+
+  useEffect(() => {
+    const keys = LoadAllKeys();
+    setKeysArray(keys);
+  }, [loading, setKeysArray]);
+
 
   const genKey = async (keyType: "ecc" | "rsa") => {
     if (!passphrase || !confirmPassphrase) {

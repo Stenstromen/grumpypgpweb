@@ -11,19 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import { KeyPairOutput } from "./Atoms";
 import { IconTrash } from "@tabler/icons-react";
-import { Key } from "../Types";
 import { LoadAllKeys, SaveKeys } from "../crypto/Store";
-
-const useLoadKeys = () => {
-  const [keysArray, setKeysArray] = useState<Key[]>([]);
-
-  useEffect(() => {
-    const keys = LoadAllKeys();
-    setKeysArray(keys);
-  }, []);
-
-  return [keysArray, setKeysArray] as const;
-};
+import { useDefaultProvider } from "../contexts/Default";
 
 function BrowserStore() {
   const [publicKey, setPublicKey] = useState<string>("");
@@ -31,7 +20,12 @@ function BrowserStore() {
   const [publicKeyImport, setPublicKeyImport] = useState<string>("");
   const [privateKeyImport, setPrivateKeyImport] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [keysArray, setKeysArray] = useLoadKeys();
+  const {keysArray, setKeysArray} = useDefaultProvider();
+
+  useEffect(() => {
+    const keys = LoadAllKeys();
+    setKeysArray(keys);
+  }, [setKeysArray, loading]);
 
   const SaveKeysButton = () => {
     return (

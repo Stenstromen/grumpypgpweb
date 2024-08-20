@@ -16,20 +16,14 @@ import {
 import { EmailInput } from "./Atoms";
 import { EncryptMessagePublicKey, FetchPublicKey } from "../crypto/Encrypt";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
-import { Key } from "../Types";
-import { LoadAllKeys } from "../crypto/Store";
+import { useDefaultProvider } from "../contexts/Default";
 
 function Encrypt() {
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [publicKey, setPublicKey] = useState<string>("");
   const [encryptedMessage, setEncryptedMessage] = useState<string>("");
-  const [keysArray, setKeysArray] = useState<Key[]>([]);
-
-  useEffect(() => {
-    const keys = LoadAllKeys();
-    setKeysArray(keys);
-  }, [keysArray]);
+  const { keysArray } = useDefaultProvider();
 
   const EncryptMessageFromPublicKey = async () => {
     const encrypted = await EncryptMessagePublicKey(message, publicKey);

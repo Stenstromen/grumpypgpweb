@@ -24,10 +24,9 @@ import {
   IconPasswordUser,
   IconX,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SignMessagePrivateKey, VerifyMessagePublicKey } from "../crypto/Sign";
-import { LoadAllKeys } from "../crypto/Store";
-import { Key } from "../Types";
+import { useDefaultProvider } from "../contexts/Default";
 
 function Sign() {
   const [message, setMessage] = useState("");
@@ -37,12 +36,7 @@ function Sign() {
   const [publicKey, setPublicKey] = useState("");
   const [verificationMessage, setVerificationMessage] = useState("");
   const [visible, { toggle }] = useDisclosure(false);
-  const [keysArray, setKeysArray] = useState<Key[]>([]);
-
-  useEffect(() => {
-    const keys = LoadAllKeys();
-    setKeysArray(keys);
-  }, [keysArray]);
+  const { keysArray } = useDefaultProvider();
 
   const sign = async () => {
     const signed = await SignMessagePrivateKey(message, privateKey, passphrase);

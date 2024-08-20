@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { /* useEffect,  */ useState } from "react";
 import { DecryptMessagePrivateKey } from "../crypto/Decrypt";
 import {
   Button,
@@ -14,15 +14,14 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPasswordUser } from "@tabler/icons-react";
-import { Key } from "../Types";
-import { LoadAllKeys } from "../crypto/Store";
+import { useDefaultProvider } from "../contexts/Default";
 
 function Decrypt() {
   const [message, setMessage] = useState("");
   const [decryptedMessage, setDecryptedMessage] = useState("");
   const [passphrase, setPassphrase] = useState("");
   const [privateKey, setPrivateKey] = useState("");
-  const [keysArray, setKeysArray] = useState<Key[]>([]);
+  const { keysArray } = useDefaultProvider();
   const [visible, { toggle }] = useDisclosure(false);
 
   const decrypt = async () => {
@@ -33,11 +32,6 @@ function Decrypt() {
     );
     setDecryptedMessage(decrypted);
   };
-
-  useEffect(() => {
-    const keys = LoadAllKeys();
-    setKeysArray(keys);
-  }, [keysArray]);
 
   return (
     <div>
