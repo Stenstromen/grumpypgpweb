@@ -23,7 +23,20 @@ import { DefaultProvider, useDefaultProvider } from "./contexts/Default";
 import { LoadAllKeys } from "./crypto/Store";
 
 const Sus = () => {
-  return <Skeleton height="100%" mt={6} width="100%" radius="xl" />;
+  return (
+    <>
+      <Skeleton height={8} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} radius="xl" />
+      <Skeleton height={8} mt={6} width="70%" radius="xl" />
+    </>
+  );
 };
 
 const MainComponent = () => {
@@ -120,6 +133,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainComponent />} />
           <Route path="/:tabValue" element={<MainComponent />} />
+          <Route path="/:tabValue/:id" element={<MainComponent />} />
         </Routes>
       </Router>
     </MantineProvider>

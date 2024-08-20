@@ -9,6 +9,7 @@ import {
   Input,
   rem,
   Select,
+  Skeleton,
   Tabs,
   Textarea,
   Tooltip,
@@ -17,13 +18,34 @@ import { EmailInput } from "./Atoms";
 import { EncryptMessagePublicKey, FetchPublicKey } from "../crypto/Encrypt";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
 import { useDefaultProvider } from "../contexts/Default";
+import { useParams } from "react-router-dom";
 
 function Encrypt() {
+  const { id } = useParams<{ id: string }>();
+  const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [publicKey, setPublicKey] = useState<string>("");
   const [encryptedMessage, setEncryptedMessage] = useState<string>("");
   const { keysArray } = useDefaultProvider();
+
+  const LoadingBox = () => {
+    return (
+      <>
+        Public Key
+        <Skeleton height={8} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} radius="xl" />
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
+      </>
+    );
+  };
 
   const EncryptMessageFromPublicKey = async () => {
     const encrypted = await EncryptMessagePublicKey(message, publicKey);
@@ -31,10 +53,17 @@ function Encrypt() {
   };
 
   useEffect(() => {
+    if (id) {
+      setEmail(id);
+    }
+  }, [id]);
+
+  useEffect(() => {
     if (!email.includes("@") || !email.includes(".")) {
       return;
     }
 
+    setLoading(true);
     const timeout = setTimeout(() => {
       FetchPublicKey(email)
         .then((data) => {
@@ -44,7 +73,8 @@ function Encrypt() {
           console.error(error);
           console.error("Error fetching public key");
         });
-    }, 1000);
+      setLoading(false);
+    }, 500);
     return () => clearTimeout(timeout);
   }, [email]);
   return (
@@ -106,13 +136,18 @@ function Encrypt() {
                 readOnly
                 style={{ display: encryptedMessage ? undefined : "none" }}
               />
-              <Textarea
-                label="Public Key"
-                placeholder="Fetch public key from keys.openpgp.org"
-                rows={10}
-                value={publicKey}
-                readOnly
-              />
+
+              {loading ? (
+                <LoadingBox />
+              ) : (
+                <Textarea
+                  label="Public Key"
+                  placeholder="Fetch public key from keys.openpgp.org"
+                  rows={10}
+                  value={publicKey}
+                  readOnly
+                />
+              )}
             </Grid.Col>
           </Grid>
         </Tabs.Panel>
