@@ -14,6 +14,8 @@ import {
   Chip,
   Center,
   Box,
+  Input,
+  Select,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -22,8 +24,10 @@ import {
   IconPasswordUser,
   IconX,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SignMessagePrivateKey, VerifyMessagePublicKey } from "../crypto/Sign";
+import { LoadAllKeys } from "../crypto/Store";
+import { Key } from "../Types";
 
 function Sign() {
   const [message, setMessage] = useState("");
@@ -33,6 +37,12 @@ function Sign() {
   const [publicKey, setPublicKey] = useState("");
   const [verificationMessage, setVerificationMessage] = useState("");
   const [visible, { toggle }] = useDisclosure(false);
+  const [keysArray, setKeysArray] = useState<Key[]>([]);
+
+  useEffect(() => {
+    const keys = LoadAllKeys();
+    setKeysArray(keys);
+  }, [keysArray]);
 
   const sign = async () => {
     const signed = await SignMessagePrivateKey(message, privateKey, passphrase);
@@ -55,6 +65,23 @@ function Sign() {
         <Tabs.Panel value="privatekey">
           <Grid>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <Input.Wrapper label="PrivateKey" description="Private PGP Key">
+                <Select
+                  placeholder="BrowserStore"
+                  data={keysArray.map((key) => ({
+                    value: key.id,
+                    label: `${key.primaryUser} // ${key.id.slice(-8)}`,
+                  }))}
+                  onChange={(e) => {
+                    const selectedKey = keysArray.find((key) => key.id === e);
+                    if (selectedKey) {
+                      setPrivateKey(selectedKey.privateKey);
+                    }
+                  }}
+                  onClear={() => setPrivateKey("")}
+                  clearable
+                />
+              </Input.Wrapper>
               <Textarea
                 label="Message"
                 placeholder="Enter Message"
