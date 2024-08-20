@@ -4,7 +4,7 @@ import { Key } from "../Types";
 
 export const DefaultContext = createContext({
   keysArray: [] as Key[],
-  setKeysArray: (keysArray: Key[]) => {},
+  setKeysArray: (_keysArray: Key[]) => {},
 });
 
 import { ReactNode } from "react";
