@@ -54,6 +54,7 @@ export const KeyPairOutput: React.FC<{
         label="Public Key"
         value={publicKey}
         rows={10}
+        readOnly
       />
       <Textarea
         leftSection={
@@ -85,6 +86,7 @@ export const KeyPairOutput: React.FC<{
         label="Private Key"
         value={privateKey}
         rows={10}
+        readOnly
       />
     </>
   );

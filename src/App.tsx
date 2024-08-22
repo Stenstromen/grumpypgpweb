@@ -125,6 +125,7 @@ function App() {
   useEffect(() => {
     const keys = LoadAllKeys();
     setKeysArray(keys);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keysArray]);
 
   return (

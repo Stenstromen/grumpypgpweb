@@ -185,7 +185,7 @@ function Generate() {
                     onChange={(e) => setCurve(e.currentTarget.value as Curves)}
                   >
                     {eccCurves.map((curve) => (
-                      <option value={curve.toLowerCase()}>{curve}</option>
+                      <option key={curve} value={curve.toLowerCase()}>{curve}</option>
                     ))}
                   </Input>
                 </Input.Wrapper>

@@ -56,7 +56,7 @@ function BrowserStore() {
               Click on a key to load it into the output area
               <Stack>
                 {keysArray.map((key) => (
-                  <Group>
+                  <Group key={key.id}>
                     <Button
                       onClick={() => {
                         setPublicKey(key.publicKey);
