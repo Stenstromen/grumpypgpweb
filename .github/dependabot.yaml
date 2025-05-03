@@ -16,3 +16,7 @@ updates:
         versions: [">=7.15.0"]
       - dependency-name: "vite"
         versions: [">=5.4.18"]
+      - dependency-name: "react"
+        versions: [">=18.3.1"]
+      - dependency-name: "@types/react"
+        versions: [">=18.3.3"]
