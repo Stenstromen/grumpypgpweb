@@ -14,3 +14,5 @@ updates:
         versions: [">=7.15.0"]
       - dependency-name: "@typescript-eslint/parser"
         versions: [">=7.15.0"]
+      - dependency-name: "vite"
+        versions: [">=5.4.18"]
