@@ -24,3 +24,5 @@ updates:
         versions: [">=18.3.3"]
       - dependency-name: "@types/react-dom"
         versions: [">=18.3.0"]
+      - dependency-name: "openpgp"
+        versions: [">=5.11.2"]
