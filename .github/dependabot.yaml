@@ -1,0 +1,16 @@
+---
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: ":arrow_up: upgrade:"
+    ignore:
+      - dependency-name: "eslint"
+        versions: [">=8.57.0"]
+      - dependency-name: "@typescript-eslint/eslint-plugin"
+        versions: [">=7.15.0"]
+      - dependency-name: "@typescript-eslint/parser"
+        versions: [">=7.15.0"]
