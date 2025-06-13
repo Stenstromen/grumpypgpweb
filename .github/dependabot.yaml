@@ -7,22 +7,22 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: ":arrow_up: upgrade:"
-    ignore:
-      - dependency-name: "eslint"
-        versions: [">=8.57.0"]
-      - dependency-name: "@typescript-eslint/eslint-plugin"
-        versions: [">=7.15.0"]
-      - dependency-name: "@typescript-eslint/parser"
-        versions: [">=7.15.0"]
-      - dependency-name: "vite"
-        versions: [">=5.4.18"]
-      - dependency-name: "react"
-        versions: [">=18.3.1"]
-      - dependency-name: "react-dom"
-        versions: [">=18.3.1"]
-      - dependency-name: "@types/react"
-        versions: [">=18.3.3"]
-      - dependency-name: "@types/react-dom"
-        versions: [">=18.3.0"]
-      - dependency-name: "openpgp"
-        versions: [">=5.11.2"]
+#    ignore:
+#      - dependency-name: "eslint"
+#        versions: [">=8.57.0"]
+#      - dependency-name: "@typescript-eslint/eslint-plugin"
+#        versions: [">=7.15.0"]
+#      - dependency-name: "@typescript-eslint/parser"
+#        versions: [">=7.15.0"]
+#      - dependency-name: "vite"
+#        versions: [">=5.4.18"]
+#      - dependency-name: "react"
+#        versions: [">=18.3.1"]
+#      - dependency-name: "react-dom"
+#        versions: [">=18.3.1"]
+#      - dependency-name: "@types/react"
+#        versions: [">=18.3.3"]
+#      - dependency-name: "@types/react-dom"
+#        versions: [">=18.3.0"]
+#      - dependency-name: "openpgp"
+#        versions: [">=5.11.2"]
