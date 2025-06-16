@@ -11,7 +11,7 @@ export const GenerateECCKeypair = async (
   const { privateKey, publicKey }: openpgp.SerializedKeyPair<string> =
     await openpgp.generateKey({
       type: "ecc",
-      curve: curve,
+      curve: curve as openpgp.EllipticCurveName,
       userIDs: [{ name: name, email: email, comment: comment }],
       passphrase: passphrase,
       format: "armored",
