@@ -8,14 +8,13 @@ export const GenerateECCKeypair = async (
   comment: string,
   passphrase: string
 ) => {
-  const { privateKey, publicKey }: openpgp.SerializedKeyPair<string> =
-    await openpgp.generateKey({
-      type: "ecc",
-      curve: curve as openpgp.EllipticCurveName,
-      userIDs: [{ name: name, email: email, comment: comment }],
-      passphrase: passphrase,
-      format: "armored",
-    });
+  const { privateKey, publicKey } = await openpgp.generateKey({
+    type: "ecc",
+    curve: curve as openpgp.EllipticCurveName,
+    userIDs: [{ name: name, email: email, comment: comment }],
+    passphrase: passphrase,
+    format: "armored",
+  });
 
   return {
     privateKey: privateKey,
@@ -30,14 +29,13 @@ export const GenerateRSAKeypair = async (
   comment: string,
   passphrase: string
 ) => {
-  const { privateKey, publicKey }: openpgp.SerializedKeyPair<string> =
-    await openpgp.generateKey({
-      type: "rsa",
-      rsaBits: bits,
-      userIDs: [{ name: name, email: email, comment: comment }],
-      passphrase: passphrase,
-      format: "armored",
-    });
+  const { privateKey, publicKey } = await openpgp.generateKey({
+    type: "rsa",
+    rsaBits: bits,
+    userIDs: [{ name: name, email: email, comment: comment }],
+    passphrase: passphrase,
+    format: "armored",
+  });
 
   return {
     privateKey: privateKey,

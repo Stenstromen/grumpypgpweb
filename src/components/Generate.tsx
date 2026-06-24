@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import * as openpgp from "openpgp";
 import { GenerateECCKeypair, GenerateRSAKeypair } from "../crypto/Generate";
 import {
   Button,
@@ -69,13 +68,23 @@ function Generate() {
     let publicKey: string;
 
     if (keyType === "ecc") {
-      const keyPair: openpgp.SerializedKeyPair<string> =
-        await GenerateECCKeypair(curve, name, email, comment, passphrase);
+      const keyPair = await GenerateECCKeypair(
+        curve,
+        name,
+        email,
+        comment,
+        passphrase
+      );
       privateKey = keyPair.privateKey;
       publicKey = keyPair.publicKey;
     } else if (keyType === "rsa") {
-      const keyPair: openpgp.SerializedKeyPair<string> =
-        await GenerateRSAKeypair(bits, name, email, comment, passphrase);
+      const keyPair = await GenerateRSAKeypair(
+        bits,
+        name,
+        email,
+        comment,
+        passphrase
+      );
       privateKey = keyPair.privateKey;
       publicKey = keyPair.publicKey;
     } else {
