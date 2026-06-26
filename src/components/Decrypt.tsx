@@ -1,4 +1,4 @@
-import { /* useEffect,  */ useState } from "react";
+import { useState } from "react";
 import { DecryptMessagePrivateKey } from "../crypto/Decrypt";
 import {
   Button,
@@ -13,7 +13,7 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPasswordUser } from "@tabler/icons-react";
+import { IconPasswordUser, IconFaceIdError } from "@tabler/icons-react";
 import { useDefaultProvider } from "../contexts/Default";
 
 function Decrypt() {
@@ -28,7 +28,7 @@ function Decrypt() {
     const decrypted = await DecryptMessagePrivateKey(
       message,
       privateKey,
-      passphrase
+      passphrase,
     );
     setDecryptedMessage(decrypted);
   };
@@ -80,7 +80,20 @@ function Decrypt() {
               </Group>
               <Divider my="xs" size="sm" labelPosition="center" />
               <Group grow>
-                <Button onClick={() => decrypt()}>Decrypt</Button>
+                <Button onClick={() => decrypt()}>
+                  {decryptedMessage
+                    .toString()
+                    .includes(
+                      "Error: Error decrypting private key: Incorrect key passphrase",
+                    ) ? (
+                    <>
+                      <IconFaceIdError color="red" size={32} /> Incorrect
+                      Passphrase
+                    </>
+                  ) : (
+                    "Decrypt"
+                  )}
+                </Button>
               </Group>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
@@ -89,7 +102,17 @@ function Decrypt() {
                 rows={10}
                 value={decryptedMessage}
                 readOnly
-                style={{ display: decryptedMessage ? undefined : "none" }}
+                style={{
+                  display:
+                    decryptedMessage === "" ||
+                    decryptedMessage
+                      .toString()
+                      .includes(
+                        "Error: Error decrypting private key: Incorrect key passphrase",
+                      )
+                      ? "none"
+                      : undefined,
+                }}
               />
               <Textarea
                 label="Private Key"

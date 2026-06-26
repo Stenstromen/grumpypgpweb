@@ -22,9 +22,10 @@ import {
   IconCheck,
   IconCopy,
   IconPasswordUser,
+  IconFaceIdError,
   IconX,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SignMessagePrivateKey, VerifyMessagePublicKey } from "../crypto/Sign";
 import { useDefaultProvider } from "../contexts/Default";
 
@@ -48,6 +49,17 @@ function Sign() {
     setVerificationMessage(verified);
     console.log(verified);
   };
+
+  useEffect(() => {
+    if (
+      signedMessage.includes(
+        "Error: Error decrypting private key: Incorrect key passphrase",
+      )
+    ) {
+      const timeout = setTimeout(() => setSignedMessage(""), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [signedMessage]);
 
   return (
     <div>
@@ -97,7 +109,20 @@ function Sign() {
               </Group>
               <Divider my="xs" size="sm" labelPosition="center" />
               <Group grow>
-                <Button onClick={() => sign()}>Sign</Button>
+                <Button onClick={() => sign()}>
+                  {signedMessage
+                    .toString()
+                    .includes(
+                      "Error: Error decrypting private key: Incorrect key passphrase",
+                    ) ? (
+                    <>
+                      <IconFaceIdError color="red" size={32} /> Incorrect
+                      Passphrase
+                    </>
+                  ) : (
+                    "Sign"
+                  )}
+                </Button>
               </Group>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
@@ -130,7 +155,17 @@ function Sign() {
                 rows={10}
                 value={signedMessage}
                 readOnly
-                style={{ display: signedMessage ? undefined : "none" }}
+                style={{
+                  display:
+                    signedMessage === "" ||
+                    signedMessage
+                      .toString()
+                      .includes(
+                        "Error: Error decrypting private key: Incorrect key passphrase",
+                      )
+                      ? "none"
+                      : undefined,
+                }}
               />
               <Textarea
                 label="Private Key"

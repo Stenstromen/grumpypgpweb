@@ -10,7 +10,7 @@ import {
   Divider,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
+import { IconAlertCircle, IconChevronDown } from "@tabler/icons-react";
 import {
   CommentInput,
   EmailInput,
@@ -32,8 +32,9 @@ function Generate() {
   const [passphrase, setPassphrase] = useState<string>("");
   const [confirmPassphrase, setConfirmPassphrase] = useState<string>("");
   const [bits, setBits] = useState<2048 | 4096>(4096);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<"ecc" | "rsa" | "save" | "">("");
   const [visible, { toggle }] = useDisclosure(false);
+  const [error, setError] = useState<string>("");
   const eccCurves: string[] = [
     "Curve25519",
     "Ed25519",
@@ -52,18 +53,39 @@ function Generate() {
     setKeysArray(keys);
   }, [loading, setKeysArray]);
 
+  useEffect(() => {
+    if (!error) return;
+    const timeout = setTimeout(() => setError(""), 2000);
+    return () => clearTimeout(timeout);
+  }, [error]);
+
+  const GenerateKeyButton = ({ keyType }: { keyType: "ecc" | "rsa" }) => {
+    return (
+      <Button loading={loading === keyType} onClick={genKey.bind(null, keyType)}>
+        {error ? (
+          <>
+            <IconAlertCircle color="red" size={32} /> {error}
+          </>
+        ) : (
+          "Generate"
+        )}
+      </Button>
+    );
+  };
 
   const genKey = async (keyType: "ecc" | "rsa") => {
     if (!passphrase || !confirmPassphrase) {
-      alert("Please enter a passphrase!");
+      setError("Please enter a passphrase!");
       return;
     }
 
     if (passphrase !== confirmPassphrase) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match!");
       return;
     }
 
+
+    setLoading(keyType);
     let privateKey: string;
     let publicKey: string;
 
@@ -73,7 +95,7 @@ function Generate() {
         name,
         email,
         comment,
-        passphrase
+        passphrase,
       );
       privateKey = keyPair.privateKey;
       publicKey = keyPair.publicKey;
@@ -83,32 +105,35 @@ function Generate() {
         name,
         email,
         comment,
-        passphrase
+        passphrase,
       );
       privateKey = keyPair.privateKey;
       publicKey = keyPair.publicKey;
     } else {
-      alert("Invalid key type!");
+      setError("Invalid key type!");
+      setLoading("");
       return;
     }
 
     setPublicKey(publicKey);
     setPrivateKey(privateKey);
+    setError("");
+    setLoading("");
   };
 
   const SaveKeysButton = () => {
     return (
-      <Button fullWidth loading={loading} onClick={handleSaveKeys}>
+      <Button fullWidth loading={loading === "save"} onClick={handleSaveKeys}>
         Save to BrowserStore
       </Button>
     );
   };
 
   const handleSaveKeys = () => {
-    setLoading(true);
+    setLoading("save");
     setTimeout(() => {
       SaveKeys(publicKey, privateKey);
-      setLoading(false);
+      setLoading("");
     }, 1000);
   };
 
@@ -167,7 +192,7 @@ function Generate() {
               </Group>
               <Divider my="xs" size="sm" labelPosition="center" />
               <Group grow>
-                <Button onClick={genKey.bind(null, "rsa")}>Generate</Button>
+                <GenerateKeyButton keyType={"rsa"} />
               </Group>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
@@ -194,7 +219,9 @@ function Generate() {
                     onChange={(e) => setCurve(e.currentTarget.value as Curves)}
                   >
                     {eccCurves.map((curve) => (
-                      <option key={curve} value={curve.toLowerCase()}>{curve}</option>
+                      <option key={curve} value={curve.toLowerCase()}>
+                        {curve}
+                      </option>
                     ))}
                   </Input>
                 </Input.Wrapper>
@@ -225,7 +252,7 @@ function Generate() {
               </Group>
               <Divider my="xs" size="sm" labelPosition="center" />
               <Group grow>
-                <Button onClick={genKey.bind(null, "ecc")}>Generate</Button>
+                <GenerateKeyButton keyType={"ecc"} />
               </Group>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
