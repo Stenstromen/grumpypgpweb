@@ -25,7 +25,7 @@ import { useDefaultProvider } from "../contexts/Default";
 function Generate() {
   const [publicKey, setPublicKey] = useState<string>("");
   const [privateKey, setPrivateKey] = useState<string>("");
-  const [curve, setCurve] = useState<Curves>("curve25519");
+  const [curve, setCurve] = useState<Curves>("curve25519Legacy");
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -35,16 +35,16 @@ function Generate() {
   const [loading, setLoading] = useState<"ecc" | "rsa" | "save" | "">("");
   const [visible, { toggle }] = useDisclosure(false);
   const [error, setError] = useState<string>("");
-  const eccCurves: string[] = [
-    "Curve25519",
-    "Ed25519",
-    "P256",
-    "P384",
-    "P521",
-    "BrainpoolP256r1",
-    "BrainpoolP384r1",
-    "BrainpoolP512r1",
-    "Secp256k1",
+  const eccCurves: { label: string; value: Curves }[] = [
+    { label: "Curve25519", value: "curve25519Legacy" },
+    { label: "Ed25519", value: "ed25519Legacy" },
+    { label: "P256", value: "nistP256" },
+    { label: "P384", value: "nistP384" },
+    { label: "P521", value: "nistP521" },
+    { label: "BrainpoolP256r1", value: "brainpoolP256r1" },
+    { label: "BrainpoolP384r1", value: "brainpoolP384r1" },
+    { label: "BrainpoolP512r1", value: "brainpoolP512r1" },
+    { label: "Secp256k1", value: "secp256k1" },
   ];
   const { setKeysArray } = useDefaultProvider();
 
@@ -61,7 +61,10 @@ function Generate() {
 
   const GenerateKeyButton = ({ keyType }: { keyType: "ecc" | "rsa" }) => {
     return (
-      <Button loading={loading === keyType} onClick={genKey.bind(null, keyType)}>
+      <Button
+        loading={loading === keyType}
+        onClick={genKey.bind(null, keyType)}
+      >
         {error ? (
           <>
             <IconAlertCircle color="red" size={32} /> {error}
@@ -83,7 +86,6 @@ function Generate() {
       setError("Passwords do not match!");
       return;
     }
-
 
     setLoading(keyType);
     let privateKey: string;
@@ -218,9 +220,9 @@ function Generate() {
                     value={curve}
                     onChange={(e) => setCurve(e.currentTarget.value as Curves)}
                   >
-                    {eccCurves.map((curve) => (
-                      <option key={curve} value={curve.toLowerCase()}>
-                        {curve}
+                    {eccCurves.map(({ label, value }) => (
+                      <option key={value} value={value}>
+                        {label}
                       </option>
                     ))}
                   </Input>

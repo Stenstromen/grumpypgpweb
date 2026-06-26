@@ -14,6 +14,8 @@ export const GenerateECCKeypair = async (
     userIDs: [{ name: name, email: email, comment: comment }],
     passphrase: passphrase,
     format: "armored",
+    // secp256k1 is rejected by default; allow all curves the UI exposes.
+    config: { rejectCurves: new Set() },
   });
 
   return {
