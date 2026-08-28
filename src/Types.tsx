@@ -15,4 +15,5 @@ export type Key = {
   primaryUser: string;
   publicKey: string;
   privateKey: string;
+  label?: string;
 };

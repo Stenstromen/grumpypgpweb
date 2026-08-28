@@ -7,11 +7,16 @@ import {
   Stack,
   Tabs,
   Textarea,
+  TextInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { KeyPairOutput } from "./Atoms";
-import { IconTrash } from "@tabler/icons-react";
-import { LoadAllKeys, SaveKeys } from "../crypto/Store";
+import { IconAlertCircle, IconTrash } from "@tabler/icons-react";
+import {
+  formatStoredKeyLabel,
+  LoadAllKeys,
+  SaveKeys,
+} from "../crypto/Store";
 import { useDefaultProvider } from "../contexts/Default";
 
 function BrowserStore() {
@@ -19,7 +24,9 @@ function BrowserStore() {
   const [privateKey, setPrivateKey] = useState<string>("");
   const [publicKeyImport, setPublicKeyImport] = useState<string>("");
   const [privateKeyImport, setPrivateKeyImport] = useState<string>("");
+  const [keyName, setKeyName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const {keysArray, setKeysArray} = useDefaultProvider();
 
   useEffect(() => {
@@ -27,20 +34,50 @@ function BrowserStore() {
     setKeysArray(keys);
   }, [setKeysArray, loading]);
 
+  useEffect(() => {
+    if (!error) return;
+    const timeout = setTimeout(() => setError(""), 3000);
+    return () => clearTimeout(timeout);
+  }, [error]);
+
   const SaveKeysButton = () => {
     return (
       <Button fullWidth loading={loading} onClick={handleSaveKeys}>
-        Save to BrowserStore
+        {error ? (
+          <>
+            <IconAlertCircle color="red" size={32} /> {error}
+          </>
+        ) : (
+          "Save to BrowserStore"
+        )}
       </Button>
     );
   };
 
-  const handleSaveKeys = () => {
+  const handleSaveKeys = async () => {
+    if (!privateKeyImport.trim()) {
+      setError("Private key is required");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      SaveKeys(publicKeyImport, privateKeyImport);
+    setError("");
+    try {
+      const saved = await SaveKeys(
+        publicKeyImport,
+        privateKeyImport,
+        keyName,
+      );
+      if (!saved) {
+        setError("Could not import key. Check that it is valid.");
+        return;
+      }
+      setPublicKeyImport(saved.publicKey);
+      setPrivateKeyImport(saved.privateKey);
+      setKeysArray(LoadAllKeys());
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -63,8 +100,7 @@ function BrowserStore() {
                         setPrivateKey(key.privateKey);
                       }}
                     >
-                      {key.primaryUser} // {key.id.slice(-8)} //{" "}
-                      {key.creationTime.toString()}
+                      {formatStoredKeyLabel(key, true)}
                     </Button>
                     <ActionIcon
                       size="input-sm"
@@ -92,12 +128,24 @@ function BrowserStore() {
           <Grid>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
               <Stack>
-                <p>Import a key by pasting it here</p>
+                <p>
+                  Paste a private key to import it. The public key is optional
+                  and will be generated from the private key if left empty. Give
+                  the key a custom name to identify it in the store.
+                </p>
               </Stack>
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+              <TextInput
+                label="Name"
+                description="Custom name for this key in the browser store"
+                placeholder="My laptop key"
+                value={keyName}
+                onChange={(event) => setKeyName(event.currentTarget.value)}
+              />
               <Textarea
                 label="Public Key"
+                description="Optional. Generated from the private key if omitted."
                 value={publicKeyImport}
                 rows={10}
                 onChange={(event) =>

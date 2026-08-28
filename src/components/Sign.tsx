@@ -28,6 +28,7 @@ import {
 import { useEffect, useState } from "react";
 import { SignMessagePrivateKey, VerifyMessagePublicKey } from "../crypto/Sign";
 import { useDefaultProvider } from "../contexts/Default";
+import { formatStoredKeyLabel } from "../crypto/Store";
 
 function Sign() {
   const [message, setMessage] = useState("");
@@ -76,7 +77,7 @@ function Sign() {
                   placeholder="BrowserStore"
                   data={keysArray.map((key) => ({
                     value: key.id,
-                    label: `${key.primaryUser} // ${key.id.slice(-8)}`,
+                    label: formatStoredKeyLabel(key),
                   }))}
                   onChange={(e) => {
                     const selectedKey = keysArray.find((key) => key.id === e);

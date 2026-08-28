@@ -15,6 +15,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconPasswordUser, IconFaceIdError } from "@tabler/icons-react";
 import { useDefaultProvider } from "../contexts/Default";
+import { formatStoredKeyLabel } from "../crypto/Store";
 
 function Decrypt() {
   const [message, setMessage] = useState("");
@@ -47,7 +48,7 @@ function Decrypt() {
                   placeholder="BrowserStore"
                   data={keysArray.map((key) => ({
                     value: key.id,
-                    label: `${key.primaryUser} // ${key.id.slice(-8)}`,
+                    label: formatStoredKeyLabel(key),
                   }))}
                   onChange={(e) => {
                     const selectedKey = keysArray.find((key) => key.id === e);

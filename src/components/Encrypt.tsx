@@ -18,6 +18,7 @@ import { EmailInput } from "./Atoms";
 import { EncryptMessagePublicKey, FetchPublicKey } from "../crypto/Encrypt";
 import { IconCheck, IconCopy } from "@tabler/icons-react";
 import { useDefaultProvider } from "../contexts/Default";
+import { formatStoredKeyLabel } from "../crypto/Store";
 import { useParams } from "react-router-dom";
 
 function Encrypt() {
@@ -160,7 +161,7 @@ function Encrypt() {
                   placeholder="BrowserStore"
                   data={keysArray.map((key) => ({
                     value: key.id,
-                    label: `${key.primaryUser} // ${key.id.slice(-8)}`,
+                    label: formatStoredKeyLabel(key),
                   }))}
                   onChange={(e) => {
                     const selectedKey = keysArray.find((key) => key.id === e);

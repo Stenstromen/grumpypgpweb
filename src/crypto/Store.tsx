@@ -9,6 +9,18 @@ export const LoadFromBrowserStore = (key: string) => {
   return localStorage.getItem(key);
 };
 
+export const formatStoredKeyLabel = (
+  key: Key,
+  includeCreationTime = false,
+) => {
+  const name = key.label || key.primaryUser || "Unnamed";
+  const shortId = key.id.slice(-8);
+  if (includeCreationTime) {
+    return `${name} // ${shortId} // ${key.creationTime.toString()}`;
+  }
+  return `${name} // ${shortId}`;
+};
+
 export const LoadAllKeys = () => {
   const keysArray: Key[] = [];
   for (let i = 0; i < localStorage.length; i++) {
@@ -30,13 +42,43 @@ export const LoadAllKeys = () => {
   return keysArray;
 };
 
-export const SaveKeys = async (publicKey: string, privateKey: string) => {
+const derivePublicKey = async (privateKey: string) => {
+  const priv = await openpgp.readPrivateKey({ armoredKey: privateKey });
+  return priv.toPublic().armor();
+};
+
+export const SaveKeys = async (
+  publicKey: string,
+  privateKey: string,
+  label?: string,
+): Promise<Key | undefined> => {
+  const trimmedPublic = publicKey.trim();
+  const trimmedPrivate = privateKey.trim();
+  const trimmedLabel = label?.trim();
+
+  let armoredPublic = trimmedPublic;
+  const armoredPrivate = trimmedPrivate;
+
+  if (!armoredPublic && armoredPrivate) {
+    try {
+      armoredPublic = await derivePublicKey(armoredPrivate);
+    } catch (e) {
+      console.error("Error deriving public key from private key", e);
+      return;
+    }
+  }
+
+  if (!armoredPublic) {
+    console.error("A public or private key is required");
+    return;
+  }
+
   let publicKeyID: string;
   let creationTime: Date;
   let primaryUser: string | undefined;
 
   try {
-    const keypair = await openpgp.readKey({ armoredKey: publicKey });
+    const keypair = await openpgp.readKey({ armoredKey: armoredPublic });
     publicKeyID = keypair.getKeyIDs()[0].toHex();
     creationTime = keypair.getCreationTime();
     primaryUser = (await keypair.getPrimaryUser()).user.userID?.name;
@@ -45,13 +87,14 @@ export const SaveKeys = async (publicKey: string, privateKey: string) => {
     return;
   }
 
-  const keys = {
+  const keys: Key = {
     id: publicKeyID,
-    creationTime: creationTime,
-    primaryUser: primaryUser,
-    publicKey: publicKey,
-    privateKey: privateKey,
+    creationTime,
+    primaryUser: primaryUser ?? "",
+    publicKey: armoredPublic,
+    privateKey: armoredPrivate,
+    ...(trimmedLabel ? { label: trimmedLabel } : {}),
   };
-  const keysString = JSON.stringify(keys);
-  SaveToBrowserStore(publicKeyID, keysString);
+  SaveToBrowserStore(publicKeyID, JSON.stringify(keys));
+  return keys;
 };
